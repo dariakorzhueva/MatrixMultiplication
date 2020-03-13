@@ -1,10 +1,6 @@
-import com.sun.xml.internal.bind.v2.TODO;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class MatrixMultiplication {
     static int[][] mA =
@@ -22,41 +18,32 @@ public class MatrixMultiplication {
     static int o = mB.length;
     static int[][] res = new int[m][n];
 
-    static Callable callable(int start1, int start2, int start3, int m, int n, int o) {
-        return () -> {
-            for (int i = start1; i < m; i++) {
-                for (int j = start2; j < n; j++) {
-                    for (int k = start3; k < o; k++) {
-                        res[i][j] += mA[i][k] * mB[k][j];
-                    }
+    static void multiply(int start1, int start2, int start3, int m, int n, int o) {
+        for (int i = start1; i < m; i++) {
+            for (int j = start2; j < n; j++) {
+                for (int k = start3; k < o; k++) {
+                    res[i][j] += mA[i][k] * mB[k][j];
                 }
             }
-            return true;
-        };
+        }
     }
 
     public static void main(String[] args) {
-        ExecutorService executor = Executors.newWorkStealingPool();
-
-        List<Callable<Boolean>> callables = Arrays.asList(
-                callable(0, 0, 0, m, n, o));
-
-        // TODO: add in cycle tasks into list
+        ExecutorService executor = Executors.newCachedThreadPool();
+        for (int x = 0; x < m; x++)
+            for (int y = 0; y < n; y++) {
+                final int row = x, col = y;
+                // TODO: need to change parameters in calling function
+                executor.submit(() -> multiply(0,0,0,m,n,o));
+            }
+        executor.shutdown();
 
         try {
-            executor.invokeAll(callables)
-                    .stream()
-                    .map(future -> {
-                        try {
-                            return future.get();
-                        } catch (Exception e) {
-                            throw new IllegalStateException(e);
-                        }
-                    })
-                    .forEach(System.out::println);
-        } catch (InterruptedException e) {
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+        }catch(InterruptedException e){
             System.out.println(e);
         }
+
 
         // TODO: print result matrix
     }
