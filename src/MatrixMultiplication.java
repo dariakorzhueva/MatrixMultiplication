@@ -10,8 +10,7 @@ public class MatrixMultiplication {
 
     static int m = 0;
     static int n = 0;
-    static int o = 0;
-    static int[][] res = new int[m][n];
+    static int[][] res = null;
 
     static void multiply(int start1, int start2, int start3, int m, int n, int o) {
         for (int i = start1; i < m; i++) {
@@ -29,38 +28,37 @@ public class MatrixMultiplication {
         mB = arrayToFile.loadArrayFromFile("matrixB.txt");
         m = mA.length;
         n = mB[0].length;
-        o = mB.length;
+        res = new int[m][n];
 
-        if (mA.length == mB[0].length && mA[0].length == mB.length) {
+        if (m == n) {
             System.out.println("Количество потоков: ");
             Scanner s = new Scanner(System.in);
-            int threads = 0;
-            threads = s.nextInt();
+            int threads = s.nextInt();
 
-            if(threads == 0)
+            if (threads == 0)
                 threads = Runtime.getRuntime().availableProcessors();
 
             System.out.println("Количество потоков: " + threads);
 
             ExecutorService executor = Executors.newFixedThreadPool(threads);
 
-            int m2 = 0;
-            int n2 = 0;
-            int o2 = 0;
+            int start = 0;
 
-            for (int x = 0; x < m; x++)
-                for (int y = 0; y < n; y++) {
-                    final int start1 = m2;
-                    final int start2 = n2;
-                    final int start3 = o2;
-                    final int m1 = m/threads;
-                    final int n1 = n/threads;
-                    final int o1 = o/threads;
-                    executor.submit(() -> multiply(start1, start2, start3, m1, n1, o1));
-                    m2 = m1;
-                    n2 = n1;
-                    o2 = o1;
-                }
+            int m3 = m / threads;
+            final int n1 = n;
+            final int o1 = n;
+
+            for (int x = 0; x < m / threads; x++) {
+                final int start1 = start;
+                final int start2 = start;
+                final int start3 = start;
+                final int m1 = m3;
+
+
+                executor.submit(() -> multiply(start1, start2, start3, m1, n1, o1));
+                start = m3;
+                m3 += m / threads;
+            }
 
             executor.shutdown();
 
@@ -71,9 +69,7 @@ public class MatrixMultiplication {
             }
 
             arrayToFile.printArray(res);
-        } else if (mA.length != mB[0].length)
-            System.out.println("Количество строк матрицы A не совпадает с количеством столбцов матрицы B");
-        else if (mA[0].length == mB.length)
-            System.out.println("Количество строк матрицы B не совпадает с количеством столбцов матрицы A");
+        } else
+            System.out.println("Количество столбцов матрицы A не совпадает с количеством столбцов матрицы B");
     }
 }
