@@ -35,7 +35,7 @@ public class MatrixMultiplication {
             Scanner s = new Scanner(System.in);
             int threads = s.nextInt();
 
-            if (threads == 0)
+            if (threads <= 1)
                 threads = Runtime.getRuntime().availableProcessors();
 
             System.out.println("Количество потоков: " + threads);
@@ -49,15 +49,20 @@ public class MatrixMultiplication {
             final int o1 = n;
 
             for (int x = 0; x < m / threads; x++) {
-                final int start1 = start;
-                final int start2 = start;
-                final int start3 = start;
+                final int s1 = start;
                 final int m1 = m3;
 
 
-                executor.submit(() -> multiply(start1, start2, start3, m1, n1, o1));
+                executor.submit(() -> multiply(s1, s1, s1, m1, n1, o1));
                 start = m3;
                 m3 += m / threads;
+            }
+
+            // If the dimension is odd - submit thread
+            if(m % 2 != 0){
+                final int f = start;
+                final int m1 = m3;
+                executor.submit(() -> multiply(f, f, f, m1, n1, o1));
             }
 
             executor.shutdown();
