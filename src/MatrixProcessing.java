@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.Random;
 
 public class MatrixProcessing {
-    public static void initArray(int[][] arr) {
+    public void initArray(int[][] arr) {
         Random r = new Random();
         for (int i = 0; i < arr.length; i++) {
             for (int j = 0; j < arr[0].length; j++) {
@@ -11,7 +11,7 @@ public class MatrixProcessing {
         }
     }
 
-    public static void printArray(int[][] arr) {
+    public void printArray(int[][] arr) {
         if(arr == null && arr.length == 0)
             return;
 
@@ -24,7 +24,7 @@ public class MatrixProcessing {
         System.out.println();
     }
 
-    public static void saveArrayToFile(int[][] arr, String path) {
+    public void saveArrayToFile(int[][] arr, String path) {
         if(arr == null && arr.length == 0)
             return;
 
@@ -47,7 +47,7 @@ public class MatrixProcessing {
         }
     }
 
-    public static int[][] loadArrayFromFile(String path) {
+    public int[][] loadArrayFromFile(String path) {
         int[][] arr = null;
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
 
@@ -67,4 +67,23 @@ public class MatrixProcessing {
 
         return arr;
     }
+
+    // only for square matrix!
+    public void transpose(int[][] arr){
+        if(arr.length != arr[0].length)
+            return;
+
+        int buffer;
+
+        for (int i = 0; i < arr.length; i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                buffer = arr[i][j];
+                arr[i][j] = arr[j][i];
+                arr[j][i] = buffer;
+            }
+        }
+    }
+
 }
