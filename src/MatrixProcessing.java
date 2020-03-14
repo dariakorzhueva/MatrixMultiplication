@@ -12,6 +12,9 @@ public class MatrixProcessing {
     }
 
     public static void printArray(int[][] arr) {
+        if(arr == null && arr.length == 0)
+            return;
+
         for (int i = 0; i < arr.length; i++) {
             for (int j = 0; j < arr[0].length; j++) {
                 System.out.print(arr[i][j] + " ");
@@ -22,6 +25,9 @@ public class MatrixProcessing {
     }
 
     public static void saveArrayToFile(int[][] arr, String path) {
+        if(arr == null && arr.length == 0)
+            return;
+
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(path));
             bw.write(String.valueOf(arr.length));

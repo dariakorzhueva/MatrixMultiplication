@@ -21,7 +21,7 @@ public class MatrixMultiplication {
     public static void main(String[] args) {
         MatrixProcessing arrayToFile = new MatrixProcessing();
         mA = arrayToFile.loadArrayFromFile("matrixA.txt");
-        mB = arrayToFile.loadArrayFromFile("matrixb.txt");
+        mB = arrayToFile.loadArrayFromFile("matrixB.txt");
 
 //        ExecutorService executor = Executors.newCachedThreadPool();
 //        for (int x = 0; x < m; x++)
