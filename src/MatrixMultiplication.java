@@ -40,6 +40,8 @@ public class MatrixMultiplication {
 
             ExecutorService executor = Executors.newFixedThreadPool(threads);
 
+            long startTime = System.currentTimeMillis();
+
             final int cellsForThread = (m * n) / threads;
             int firstIndex = 0;
 
@@ -69,7 +71,11 @@ public class MatrixMultiplication {
                 System.out.println(e);
             }
 
+            long endTime = System.currentTimeMillis();
+
             arrayToFile.printArray(res);
+
+            System.out.println("Время выполнения: " + (endTime - startTime) + "ms");
         } else
             System.out.println("Количество столбцов матрицы A не совпадает с количеством столбцов матрицы B");
     }
