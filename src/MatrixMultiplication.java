@@ -1,3 +1,4 @@
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -31,9 +32,17 @@ public class MatrixMultiplication {
         o = mB.length;
 
         if (mA.length == mB[0].length && mA[0].length == mB.length) {
-            int cores = Runtime.getRuntime().availableProcessors();
-            System.out.println("Количество потоков (ядер): " + cores);
-            ExecutorService executor = Executors.newFixedThreadPool(cores);
+            System.out.println("Количество потоков: ");
+            Scanner s = new Scanner(System.in);
+            int threads = 0;
+            threads = s.nextInt();
+
+            if(threads == 0)
+                threads = Runtime.getRuntime().availableProcessors();
+
+            System.out.println("Количество потоков: " + threads);
+
+            ExecutorService executor = Executors.newFixedThreadPool(threads);
 
             int m2 = 0;
             int n2 = 0;
@@ -44,9 +53,9 @@ public class MatrixMultiplication {
                     final int start1 = m2;
                     final int start2 = n2;
                     final int start3 = o2;
-                    final int m1 = m/cores;
-                    final int n1 = n/cores;
-                    final int o1 = o/cores;
+                    final int m1 = m/threads;
+                    final int n1 = n/threads;
+                    final int o1 = o/threads;
                     executor.submit(() -> multiply(start1, start2, start3, m1, n1, o1));
                     m2 = m1;
                     n2 = n1;
@@ -61,7 +70,6 @@ public class MatrixMultiplication {
                 System.out.println(e);
             }
 
-            // TODO: print result matrix
             arrayToFile.printArray(res);
         } else if (mA.length != mB[0].length)
             System.out.println("Количество строк матрицы A не совпадает с количеством столбцов матрицы B");
