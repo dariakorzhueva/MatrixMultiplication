@@ -13,6 +13,7 @@ public class MatrixMultiplication {
     static int[][] res = null;
 
     static void multiply(int start1, int start2, int start3, int m, int n, int o) {
+        System.out.println("Работает " + Thread.currentThread().getName() + "\n");
         for (int i = start1; i < m; i++) {
             for (int j = start2; j < n; j++) {
                 for (int k = start3; k < o; k++) {
@@ -48,12 +49,11 @@ public class MatrixMultiplication {
             final int n1 = n;
             final int o1 = n;
 
-            for (int x = 0; x < m / threads; x++) {
+            for (int x = 0; x < threads; x++) {
                 final int s1 = start;
                 final int m1 = m3;
 
-
-                executor.submit(() -> multiply(s1, s1, s1, m1, n1, o1));
+                executor.submit(() -> multiply(0, 0, 0, m, n, n));
                 start = m3;
                 m3 += m / threads;
             }
