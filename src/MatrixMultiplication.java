@@ -1,17 +1,7 @@
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 public class MatrixMultiplication {
-    static int[][] mA =
-            {{1, 0, 0},
-                    {0, 1, 0},
-                    {0, 0, 1}};
+    static int[][] mA = null;
 
-    static int[][] mB =
-            {{1, 0, 0},
-                    {0, 1, 0},
-                    {0, 0, 1}};
+    static int[][] mB = null;
 
     static int m = mA.length;
     static int n = mB[0].length;
@@ -29,22 +19,27 @@ public class MatrixMultiplication {
     }
 
     public static void main(String[] args) {
-        ExecutorService executor = Executors.newCachedThreadPool();
-        for (int x = 0; x < m; x++)
-            for (int y = 0; y < n; y++) {
-                final int row = x, col = y;
-                // TODO: need to change parameters in calling function
-                executor.submit(() -> multiply(0,0,0,m,n,o));
-            }
-        executor.shutdown();
+        MatrixProcessing arrayToFile = new MatrixProcessing();
+        mA = arrayToFile.loadArrayFromFile("matrixA.txt");
+        mB = arrayToFile.loadArrayFromFile("matrixb.txt");
 
-        try {
-            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-        }catch(InterruptedException e){
-            System.out.println(e);
-        }
+//        ExecutorService executor = Executors.newCachedThreadPool();
+//        for (int x = 0; x < m; x++)
+//            for (int y = 0; y < n; y++) {
+//                final int row = x, col = y;
+//                // TODO: need to change parameters in calling function
+//                executor.submit(() -> multiply(0,0,0,m,n,o));
+//            }
+//        executor.shutdown();
+//
+//        try {
+//            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+//        }catch(InterruptedException e){
+//            System.out.println(e);
+//        }
 
 
         // TODO: print result matrix
+        //arrayToFile.printArray(res);
     }
 }
