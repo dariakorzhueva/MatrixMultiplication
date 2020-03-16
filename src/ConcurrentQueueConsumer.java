@@ -1,48 +1,54 @@
-public class ConcurrentQueueClient implements Runnable {
+import static java.lang.Thread.sleep;
 
-    private ConcurrentQueue concurrentQueue;
-    private int threads = 2;
+public class ConcurrentQueueConsumer implements Runnable {
+    Buffer buffer;
+    private int m = 0;
+    private int n = 0;
+    private int p = 0;
+    private int[][] mA = null;
+    private static int[][] mB = null;
     private static int[][] res = null;
+    int threads = 8;
 
-    public ConcurrentQueueClient(ConcurrentQueue concurrentQueue, int threads) {
-        this.threads = threads;
-        this.concurrentQueue = concurrentQueue;
+    ConcurrentQueueConsumer(Buffer buffer, int[][] a, int[][] b, int _threads) {
+        this.buffer = buffer;
+        m = a.length;
+        n = b[0].length;
+        p = a[0].length;
+        mA = a;
+        mB = b;
+        res = new int[p][p];
+        threads = _threads;
     }
 
+    @Override
     public void run() {
-        boolean stopCondition = (concurrentQueue.getQueueSize() == 0);
+        try {
+            sleep(1000);
+            MultiplyInterfece mi = buffer.get();
+            final int cellsForThread = (m * n) / threads;
+            int firstIndex = 0;
 
-        int m = concurrentQueue.getM();
-        int n = concurrentQueue.getN();
-        res = new int[m][n];
+            for (int threadIndex = threads - 1; threadIndex >= 0; threadIndex--) {
+                int lastIndex = firstIndex + cellsForThread;
 
-        while (!stopCondition) {
-            for (int k = 0; k < concurrentQueue.getQueueSize(); k++) {
-                final int cellsForThread = (m * n) / threads;
-                int firstIndex = 0;
-
-                for (int threadIndex = threads - 1; threadIndex >= 0; threadIndex--) {
-                    int lastIndex = firstIndex + cellsForThread;
-
-                    // Если количество ячеек не делится нацело на количество потоков
-                    if (threadIndex == 0) {
-                        lastIndex = m * n;
-                    }
-
-                    for (int i = firstIndex; i < lastIndex; i++) {
-                        final int x = i;
-                        final int y = n;
-                        res[x / y][x % y] = concurrentQueue.dequeueItem().multiply(x / y, x % y);
-                    }
-
-                    firstIndex = lastIndex;
+                // Если количество ячеек не делится нацело на количество потоков
+                if (threadIndex == 0) {
+                    lastIndex = m * n;
                 }
 
-                new MatrixProcessing().printArray(res);
-            }
-            stopCondition = (concurrentQueue.getQueueSize() == 0);
-        }
+                for (int i = firstIndex; i < lastIndex; i++) {
+                    final int x = i;
+                    final int y = n;
+                    res[x / y][x % y] = mi.multiply(x / y, x % y);
+                }
 
-        System.out.println("Client thread exiting...");
+                firstIndex = lastIndex;
+            }
+
+            new MatrixProcessing().printArray(res);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

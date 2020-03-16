@@ -1,62 +1,27 @@
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class ConcurrentQueue implements Runnable {
-
-    private ConcurrentLinkedQueue<MultiplyInterfece> concurrentLinkedQueue = new ConcurrentLinkedQueue<MultiplyInterfece>();
+public class ConcurrentQueueProducer implements Runnable {
     private int m = 0;
     private int n = 0;
+    private int p = 0;
     private int[][] mA = null;
     private static int[][] mB = null;
     private static int[][] res = null;
+    Buffer buffer;
 
-    public int getM() {
-        return m;
-    }
-
-    public int getN() {
-        return n;
-    }
-
-    @FunctionalInterface
-    interface MultiplyInterfece {
-        int multiply(int row, int col);
-    }
-
-    public ConcurrentQueue(int[][] a, int[][] b) {
+    ConcurrentQueueProducer(Buffer buffer, int[][] a, int[][] b) {
+        this.buffer = buffer;
+        m = a.length;
+        n = b[0].length;
+        p = a[0].length;
         mA = a;
         mB = b;
-        m = mA.length;
-        n = mB[0].length;
+        res = new int[p][p];
+
     }
 
-    private void multiply(int row, int col) {
-        System.out.println("Работает " + Thread.currentThread().getName() + " с ячейкой [" + row + "," + col + "]\n");
-
-        for (int i = 0; i < n; i++)
-            res[row][col] += mA[row][i] * mB[i][col];
-    }
-
-    public MultiplyInterfece dequeueItem() {
-        if (!concurrentLinkedQueue.isEmpty()) {
-            System.out.println("Queue size: " + concurrentLinkedQueue.size());
-            return concurrentLinkedQueue.poll();
-        } else {
-            return null;
-        }
-    }
-
-    private void enqueueItem(MultiplyInterfece item) {
-        concurrentLinkedQueue.add(item);
-    }
-
-    public int getQueueSize() {
-        if (!concurrentLinkedQueue.isEmpty()) {
-            return concurrentLinkedQueue.size();
-        } else {
-            return 0;
-        }
-    }
-
+    @Override
     public void run() {
         MultiplyInterfece multiplyInterfece = (row, col) -> {
             System.out.println("Работает " + Thread.currentThread().getName() + " с ячейкой [" + row + "," + col + "]\n");
@@ -66,8 +31,37 @@ public class ConcurrentQueue implements Runnable {
 
             return res[row][col];
         };
-        for (int i = 0; i < m*n; i++) {
-            enqueueItem(multiplyInterfece);
+        for (int i = 0; i < m * n; i++) {
+            buffer.put(multiplyInterfece);
         }
     }
+}
+
+class Buffer {
+    int n = 0;
+    int p = 0;
+    int[][] mA = null;
+    int[][] mB = null;
+    int[][] res = new int[p][p];
+
+    public Buffer(int _n, int[][] a, int[][] b) {
+        n = _n;
+        mA = a;
+        mB = b;
+        p = mA[0].length;
+    }
+
+    MultiplyInterfece mi;
+
+    Queue<MultiplyInterfece> clQueue = new ConcurrentLinkedQueue<MultiplyInterfece>();
+
+    public MultiplyInterfece get() {
+        return clQueue.poll();
+    }
+
+    public void put(MultiplyInterfece mi) {
+        this.mi = mi;
+        clQueue.add(mi);
+    }
+
 }

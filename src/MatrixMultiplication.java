@@ -1,7 +1,5 @@
 import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class MatrixMultiplication {
     static int m = 0;
@@ -42,25 +40,13 @@ public class MatrixMultiplication {
 
             long startTime = System.currentTimeMillis();
 
-            final int cellsForThread = (m * n) / threads;
-            int firstIndex = 0;
+            Buffer buffer = new Buffer(10, mA, mB);
 
-            for (int threadIndex = threads - 1; threadIndex >= 0; threadIndex--) {
-                int lastIndex = firstIndex + cellsForThread;
+            executor.execute(new ConcurrentQueueProducer(buffer, mA, mB));
 
-                // Если количество ячеек не делится нацело на количество потоков
-                if (threadIndex == 0) {
-                    lastIndex = m * n;
-                }
-
-                for (int i = firstIndex; i < lastIndex; i++) {
-                    final int x = i;
-                    final int y = n;
-
-                    executor.submit(() -> multiply(x / y, x % y));
-                }
-
-                firstIndex = lastIndex;
+            // TODO: need to fix thread's work
+            for (int j = 0; j < 8; j++) {
+                executor.execute(new ConcurrentQueueConsumer(buffer,mA,mB,threads));
             }
 
             executor.shutdown();
@@ -73,7 +59,7 @@ public class MatrixMultiplication {
 
             long endTime = System.currentTimeMillis();
 
-            arrayToFile.printArray(res);
+            //arrayToFile.printArray(res);
 
             System.out.println("Время выполнения: " + (endTime - startTime) + "ms");
         } else
