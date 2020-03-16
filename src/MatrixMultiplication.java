@@ -7,17 +7,11 @@ public class MatrixMultiplication {
     static int m = 0;
     static int n = 0;
     static int o = 0;
+    static int p = 0;
 
     static int[][] mA = null;
     static int[][] mB = null;
     static int[][] res = null;
-
-    static void multiply(int row, int col) {
-        System.out.println("Работает " + Thread.currentThread().getName() + " с ячейкой [" + row + "," + col + "]\n");
-
-        for (int i = 0; i < o; i++)
-            res[row][col] += mA[row][i] * mB[i][col];
-    }
 
     public static void main(String[] args) {
         MatrixProcessing arrayToFile = new MatrixProcessing();
@@ -26,9 +20,10 @@ public class MatrixMultiplication {
         m = mA.length;
         n = mB[0].length;
         o = mA[0].length;
+        p = mB.length;
         res = new int[m][n];
 
-        if (m == o) {
+        if (p == o) {
             System.out.println("Количество потоков: ");
             Scanner s = new Scanner(System.in);
             int threads = s.nextInt();
@@ -42,40 +37,18 @@ public class MatrixMultiplication {
 
             long startTime = System.currentTimeMillis();
 
-            Buffer buffer = new Buffer(10, mA, mB);
+            Buffer buffer = new Buffer(mA, mB);
 
             executor.execute(new ConcurrentQueueProducer(buffer, mA, mB));
 
-            try{
+            try {
                 Thread.sleep(1000);
-            }
-            catch(InterruptedException e){
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            final int cellsForThread = (m * n) / threads;
-            int firstIndex = 0;
 
-            for (int threadIndex = threads - 1; threadIndex >= 0; threadIndex--) {
-                int lastIndex = firstIndex + cellsForThread;
-
-                // Если количество ячеек не делится нацело на количество потоков
-                if (threadIndex == 0) {
-                    lastIndex = m * n;
-                }
-
-                for (int i = firstIndex; i < lastIndex; i++) {
-                    final int x = i;
-                    final int y = n;
-                    executor.execute(new ConcurrentQueueConsumer(buffer,mA,mB,threads, x / y, x % y));
-                }
-
-                firstIndex = lastIndex;
-            }
-
-//            // TODO: need to fix thread's work
-//            for (int j = 0; j < threads; j++) {
-//                executor.execute(new ConcurrentQueueConsumer(buffer,mA,mB,threads));
-//            }
+            for (int i = 0; i < threads && !buffer.isEmpty(); i++)
+                executor.execute(new ConcurrentQueueConsumer(buffer, mA, mB, threads));
 
             executor.shutdown();
 
