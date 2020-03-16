@@ -45,7 +45,7 @@ public class MatrixMultiplication {
             executor.execute(new ConcurrentQueueProducer(buffer, mA, mB));
 
             // TODO: need to fix thread's work
-            for (int j = 0; j < 8; j++) {
+            for (int j = 0; j < threads; j++) {
                 executor.execute(new ConcurrentQueueConsumer(buffer,mA,mB,threads));
             }
 
