@@ -47,7 +47,7 @@ public class MatrixMultiplication {
                 e.printStackTrace();
             }
 
-            for (int i = 0; i < threads && !buffer.isEmpty(); i++)
+            for (int i = 0; !buffer.isEmpty() && i < threads; i++)
                 executor.execute(new ConcurrentQueueConsumer(buffer, mA, mB, threads));
 
             executor.shutdown();
