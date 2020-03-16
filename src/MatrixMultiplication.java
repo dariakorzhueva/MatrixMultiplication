@@ -1,6 +1,8 @@
 import java.util.Scanner;
 import java.util.concurrent.*;
 
+import static java.lang.Thread.sleep;
+
 public class MatrixMultiplication {
     static int m = 0;
     static int n = 0;
@@ -44,10 +46,36 @@ public class MatrixMultiplication {
 
             executor.execute(new ConcurrentQueueProducer(buffer, mA, mB));
 
-            // TODO: need to fix thread's work
-            for (int j = 0; j < threads; j++) {
-                executor.execute(new ConcurrentQueueConsumer(buffer,mA,mB,threads));
+            try{
+                Thread.sleep(1000);
             }
+            catch(InterruptedException e){
+                e.printStackTrace();
+            }
+            final int cellsForThread = (m * n) / threads;
+            int firstIndex = 0;
+
+            for (int threadIndex = threads - 1; threadIndex >= 0; threadIndex--) {
+                int lastIndex = firstIndex + cellsForThread;
+
+                // Если количество ячеек не делится нацело на количество потоков
+                if (threadIndex == 0) {
+                    lastIndex = m * n;
+                }
+
+                for (int i = firstIndex; i < lastIndex; i++) {
+                    final int x = i;
+                    final int y = n;
+                    executor.execute(new ConcurrentQueueConsumer(buffer,mA,mB,threads, x / y, x % y));
+                }
+
+                firstIndex = lastIndex;
+            }
+
+//            // TODO: need to fix thread's work
+//            for (int j = 0; j < threads; j++) {
+//                executor.execute(new ConcurrentQueueConsumer(buffer,mA,mB,threads));
+//            }
 
             executor.shutdown();
 
