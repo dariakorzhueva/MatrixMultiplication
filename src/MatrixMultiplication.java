@@ -24,8 +24,8 @@ public class MatrixMultiplication {
         MatrixProcessing matrixProcessing = new MatrixProcessing();
         mA = matrixProcessing.loadArrayFromFile("matrixA.txt");
         mB = matrixProcessing.loadArrayFromFile("matrixB.txt");
-        mA = matrixProcessing.initArray(2500,2500);
-        mB = matrixProcessing.initArray(2500,2500);
+        //mA = matrixProcessing.initArray(2500,2500);
+        //mB = matrixProcessing.initArray(2500,2500);
         m = mA.length;
         n = mB[0].length;
         o = mA[0].length;
@@ -44,12 +44,16 @@ public class MatrixMultiplication {
             System.out.println("Пул из " + threads + " потоков");
 
             // Инициализация исполнителя одним потоком
-            ExecutorService executor1 = Executors.newSingleThreadExecutor();
+            ExecutorService executor1 = Executors.newFixedThreadPool(threads);
             Buffer buffer = new Buffer();
 
             // Инициализация и запуск потока-производителя, заполняющего очередь задач
             ConcurrentQueueProducer cqp = new ConcurrentQueueProducer(buffer, mA, mB);
-            executor1.execute(cqp);
+            // Помещение функциональных интерфейсов в очередь задач
+            for (int i = 0; i < m; i++) {
+                executor1.execute(cqp);
+            }
+
 
             // Ожидание завершения потока-производителя
             executor1.shutdown();
@@ -82,7 +86,7 @@ public class MatrixMultiplication {
 
             long endTime = System.currentTimeMillis();
 
-            //matrixProcessing.printArray(res);
+            matrixProcessing.printArray(res);
             //matrixProcessing.saveArrayToFile(res,"res.txt");
 
             System.out.println("Время выполнения: " + (endTime - startTime) + "ms");

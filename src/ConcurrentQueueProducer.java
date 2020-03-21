@@ -42,9 +42,6 @@ public class ConcurrentQueueProducer implements Runnable {
             return res[row];
         };
 
-        // Помещение функциональных интерфейсов в очередь задач
-        for (int i = 0; i < m; i++) {
-            buffer.put(multiplyInterfece);
-        }
+        buffer.put(multiplyInterfece);
     }
 }
