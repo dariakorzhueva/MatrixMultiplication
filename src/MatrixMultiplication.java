@@ -1,8 +1,6 @@
 import java.util.Scanner;
 import java.util.concurrent.*;
 
-import static java.lang.Thread.sleep;
-
 public class MatrixMultiplication {
     static int m = 0;
     static int n = 0;
@@ -15,10 +13,10 @@ public class MatrixMultiplication {
 
     public static void main(String[] args) {
         MatrixProcessing matrixProcessing = new MatrixProcessing();
-        //mA = matrixProcessing.loadArrayFromFile("matrixA.txt");
-        //mB = matrixProcessing.loadArrayFromFile("matrixB.txt");
-        mA = matrixProcessing.initArray(2500,2500);
-        mB = matrixProcessing.initArray(2500,2500);
+        mA = matrixProcessing.loadArrayFromFile("matrixA.txt");
+        mB = matrixProcessing.loadArrayFromFile("matrixB.txt");
+        //mA = matrixProcessing.initArray(5000,5000);
+        //mB = matrixProcessing.initArray(5000,5000);
         m = mA.length;
         n = mB[0].length;
         o = mA[0].length;
@@ -37,18 +35,18 @@ public class MatrixMultiplication {
 
             ExecutorService executor = Executors.newFixedThreadPool(threads);
 
-            Buffer buffer = new Buffer(mA, mB);
+            Buffer buffer = new Buffer(mA);
 
             executor.execute(new ConcurrentQueueProducer(buffer, mA, mB));
 
             try {
-                Thread.sleep(5000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
             long startTime = System.currentTimeMillis();
-            ConcurrentQueueConsumer cqc = new ConcurrentQueueConsumer(res, buffer, mA, mB);
+            ConcurrentQueueConsumer cqc = new ConcurrentQueueConsumer(res, buffer);
             for (int i = 0; i < m; i++) {
                 executor.execute(cqc);
             }
