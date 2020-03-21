@@ -1,32 +1,39 @@
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * Очередь задач
+ */
 class Buffer {
-    private int p = 0;
-    private int[][] mA = null;
-
-    public Buffer(int[][] a) {
-        mA = a;
-        p = mA[0].length;
-    }
-
     MultiplyInterfece mi;
-
     Queue<MultiplyInterfece> clQueue = new ConcurrentLinkedQueue<MultiplyInterfece>();
 
+    /**
+     * Инициализация
+     */
+    public Buffer() {
+    }
+
+    /**
+     * Взятие элемента из очереди
+     */
     public MultiplyInterfece get() {
         return clQueue.poll();
     }
 
+    /**
+     * Добавление элемент в вочередь
+     *
+     * @param mi функциональный интерфейс с получением результирующей строки
+     */
     public void put(MultiplyInterfece mi) {
         this.mi = mi;
         clQueue.add(mi);
     }
 
-    public int size() {
-        return clQueue.size();
-    }
-
+    /**
+     * Проверка очереди на пустоту
+     */
     public boolean isEmpty(){
         if(clQueue.isEmpty())
             return true;
@@ -34,7 +41,10 @@ class Buffer {
             return false;
     }
 
+    /**
+     * Получение размера очереди
+     */
     public int getSize(){
-        return size();
+        return clQueue.size();
     }
 }

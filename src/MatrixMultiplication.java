@@ -1,6 +1,9 @@
 import java.util.Scanner;
 import java.util.concurrent.*;
 
+/**
+ * Умножение матриц
+ */
 public class MatrixMultiplication {
     static int m = 0;
     static int n = 0;
@@ -11,18 +14,25 @@ public class MatrixMultiplication {
     static int[][] mB = null;
     static int[][] res = null;
 
+    /**
+     * Точка входа в приложение
+     *
+     * @param args массив значений в метод с помощью командной строки
+     */
     public static void main(String[] args) {
+        // Инициализация матриц
         MatrixProcessing matrixProcessing = new MatrixProcessing();
         mA = matrixProcessing.loadArrayFromFile("matrixA.txt");
         mB = matrixProcessing.loadArrayFromFile("matrixB.txt");
-        //mA = matrixProcessing.initArray(5000,5000);
-        //mB = matrixProcessing.initArray(5000,5000);
+        mA = matrixProcessing.initArray(2500,2500);
+        mB = matrixProcessing.initArray(2500,2500);
         m = mA.length;
         n = mB[0].length;
         o = mA[0].length;
         p = mB.length;
         res = new int[m][n];
 
+        // Если количество столбцов первой матрицы равно количеству строк второй, то производим умножение
         if (p == o) {
             System.out.println("Пул потоков: ");
             Scanner s = new Scanner(System.in);
@@ -31,37 +41,48 @@ public class MatrixMultiplication {
             if (threads <= 0)
                 threads = Runtime.getRuntime().availableProcessors();
 
-            System.out.println("Пул потоков: " + threads + " потоков");
+            System.out.println("Пул из " + threads + " потоков");
 
-            ExecutorService executor = Executors.newFixedThreadPool(threads);
+            // Инициализация исполнителя одним потоком
+            ExecutorService executor1 = Executors.newSingleThreadExecutor();
+            Buffer buffer = new Buffer();
 
-            Buffer buffer = new Buffer(mA);
+            // Инициализация и запуск потока-производителя, заполняющего очередь задач
+            ConcurrentQueueProducer cqp = new ConcurrentQueueProducer(buffer, mA, mB);
+            executor1.execute(cqp);
 
-            executor.execute(new ConcurrentQueueProducer(buffer, mA, mB));
+            // Ожидание завершения потока-производителя
+            executor1.shutdown();
 
             try {
-                Thread.sleep(2000);
+                executor1.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.out.println(e);
             }
 
+            // Инициализация исполнителя фиксированным пулом потоков, содержащим threads потоков
+            ExecutorService executor2 = Executors.newFixedThreadPool(threads);
+
+            // Запускаем потоки-исполнители
             long startTime = System.currentTimeMillis();
+
             ConcurrentQueueConsumer cqc = new ConcurrentQueueConsumer(res, buffer);
             for (int i = 0; i < m; i++) {
-                executor.execute(cqc);
+                executor2.execute(cqc);
             }
 
-            executor.shutdown();
+            // Ожидание завершения потоков
+            executor2.shutdown();
 
             try {
-                executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+                executor2.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             } catch (InterruptedException e) {
                 System.out.println(e);
             }
 
             long endTime = System.currentTimeMillis();
 
-            matrixProcessing.printArray(res);
+            //matrixProcessing.printArray(res);
             //matrixProcessing.saveArrayToFile(res,"res.txt");
 
             System.out.println("Время выполнения: " + (endTime - startTime) + "ms");
