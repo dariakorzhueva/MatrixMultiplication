@@ -14,9 +14,11 @@ public class MatrixMultiplication {
     static int[][] res = null;
 
     public static void main(String[] args) {
-        MatrixProcessing arrayToFile = new MatrixProcessing();
-        mA = arrayToFile.loadArrayFromFile("matrixA.txt");
-        mB = arrayToFile.loadArrayFromFile("matrixB.txt");
+        MatrixProcessing matrixProcessing = new MatrixProcessing();
+        //mA = matrixProcessing.loadArrayFromFile("matrixA.txt");
+        //mB = matrixProcessing.loadArrayFromFile("matrixB.txt");
+        mA = matrixProcessing.initArray(1000,1000);
+        mB = matrixProcessing.initArray(1000,1000);
         m = mA.length;
         n = mB[0].length;
         o = mA[0].length;
@@ -28,7 +30,7 @@ public class MatrixMultiplication {
             Scanner s = new Scanner(System.in);
             int threads = s.nextInt();
 
-            if (threads <= 1)
+            if (threads <= 0)
                 threads = Runtime.getRuntime().availableProcessors();
 
             System.out.println("Пул потоков: " + threads + " потоков");
@@ -40,7 +42,7 @@ public class MatrixMultiplication {
             executor.execute(new ConcurrentQueueProducer(buffer, mA, mB));
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -61,8 +63,8 @@ public class MatrixMultiplication {
 
             long endTime = System.currentTimeMillis();
 
-            arrayToFile.printArray(res);
-            //arrayToFile.saveArrayToFile(res,"res.txt");
+            //matrixProcessing.printArray(res);
+            //matrixProcessing.saveArrayToFile(res,"res.txt");
 
             System.out.println("Время выполнения: " + (endTime - startTime) + "ms");
         } else

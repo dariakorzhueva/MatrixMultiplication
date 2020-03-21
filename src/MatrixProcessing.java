@@ -2,13 +2,16 @@ import java.io.*;
 import java.util.Random;
 
 public class MatrixProcessing {
-    public void initArray(int[][] arr) {
+    public int[][] initArray(int m, int n) {
+        int[][] arr = new int[m][m];
         Random r = new Random();
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr[0].length; j++) {
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
                 arr[i][j] = r.nextInt();
             }
         }
+
+        return arr;
     }
 
     public void printArray(int[][] arr) {
