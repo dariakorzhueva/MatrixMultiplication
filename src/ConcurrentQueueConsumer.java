@@ -1,5 +1,5 @@
 public class ConcurrentQueueConsumer implements Runnable {
-    Buffer buffer;
+    private Buffer buffer;
     private int m = 0;
     private int n = 0;
     private int threads = 8;
@@ -7,22 +7,32 @@ public class ConcurrentQueueConsumer implements Runnable {
     private static int[][] mB = null;
     private static int[][] res = null;
 
-    ConcurrentQueueConsumer(Buffer buffer, int[][] a, int[][] b, int _threads) {
+    ConcurrentQueueConsumer(int[][] res, Buffer buffer, int[][] a, int[][] b, int _threads) {
         this.buffer = buffer;
         this.m = a.length;
         this.n = b[0].length;
         this.mA = a;
         this.mB = b;
-        this.res = new int[m][n];
+        this.res = res;
         this.threads = _threads;
+    }
+
+    public int[][] getRes() {
+        return res;
     }
 
     @Override
     public void run() {
-        MultiplyInterfece mi = buffer.get();
-        int row = buffer.getCountElems()-1;
-        res[row] = mi.multiply(row);
+        MultiplyInterfece mi;
+        int row = -1;
 
-        new MatrixProcessing().printArray(res);
+        synchronized (buffer) {
+            mi = buffer.get();
+            row = buffer.getSize();
+        }
+
+        if (row != -1)
+            res[row] = mi.multiply(row);
+
     }
 }

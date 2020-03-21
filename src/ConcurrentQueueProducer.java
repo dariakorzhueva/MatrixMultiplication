@@ -30,6 +30,7 @@ public class ConcurrentQueueProducer implements Runnable {
 
             return res[row];
         };
+
         for (int i = 0; i < m; i++) {
             buffer.put(multiplyInterfece);
         }
@@ -75,7 +76,7 @@ class Buffer {
             return false;
     }
 
-    public int getCountElems(){
-        return countElems;
+    public int getSize(){
+        return size();
     }
 }

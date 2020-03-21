@@ -35,8 +35,6 @@ public class MatrixMultiplication {
 
             ExecutorService executor = Executors.newFixedThreadPool(threads);
 
-            long startTime = System.currentTimeMillis();
-
             Buffer buffer = new Buffer(mA, mB);
 
             executor.execute(new ConcurrentQueueProducer(buffer, mA, mB));
@@ -47,8 +45,11 @@ public class MatrixMultiplication {
                 e.printStackTrace();
             }
 
-            for (int i = 0; !buffer.isEmpty() && i < threads; i++)
-                executor.execute(new ConcurrentQueueConsumer(buffer, mA, mB, threads));
+            long startTime = System.currentTimeMillis();
+
+            for (int i = 0; i < m; i++) {
+                executor.execute(new ConcurrentQueueConsumer(res, buffer, mA, mB, threads));
+            }
 
             executor.shutdown();
 
@@ -60,7 +61,8 @@ public class MatrixMultiplication {
 
             long endTime = System.currentTimeMillis();
 
-            //arrayToFile.printArray(res);
+            arrayToFile.printArray(res);
+            //arrayToFile.saveArrayToFile(res,"res.txt");
 
             System.out.println("Время выполнения: " + (endTime - startTime) + "ms");
         } else
