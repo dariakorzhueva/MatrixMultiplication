@@ -24,14 +24,14 @@ public class MatrixMultiplication {
         res = new int[m][n];
 
         if (p == o) {
-            System.out.println("Количество потоков: ");
+            System.out.println("Пул потоков: ");
             Scanner s = new Scanner(System.in);
             int threads = s.nextInt();
 
             if (threads <= 1)
                 threads = Runtime.getRuntime().availableProcessors();
 
-            System.out.println("Количество потоков: " + threads);
+            System.out.println("Пул потоков: " + threads + " потоков");
 
             ExecutorService executor = Executors.newFixedThreadPool(threads);
 
