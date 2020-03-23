@@ -16,7 +16,7 @@ public class MatrixProcessing {
         Random r = new Random();
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                arr[i][j] = r.nextInt();
+                arr[i][j] = 1;
             }
         }
 

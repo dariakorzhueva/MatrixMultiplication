@@ -7,8 +7,6 @@ import java.util.concurrent.*;
 public class MatrixMultiplication {
     static int m = 0;
     static int n = 0;
-    static int o = 0;
-    static int p = 0;
 
     static int[][] mA = null;
     static int[][] mB = null;
@@ -22,20 +20,18 @@ public class MatrixMultiplication {
     public static void main(String[] args) {
         // Инициализация матриц
         MatrixProcessing matrixProcessing = new MatrixProcessing();
-        mA = matrixProcessing.loadArrayFromFile("matrixA.txt");
-        mB = matrixProcessing.loadArrayFromFile("matrixB.txt");
-        //mA = matrixProcessing.initArray(2500,2500);
-        //mB = matrixProcessing.initArray(2500,2500);
+        //mA = matrixProcessing.loadArrayFromFile("matrixA.txt");
+        //mB = matrixProcessing.loadArrayFromFile("matrixB.txt");
+        mA = matrixProcessing.initArray(5000,5000);
+        mB = matrixProcessing.initArray(5000,5000);
         m = mA.length;
         n = mB[0].length;
-        o = mA[0].length;
-        p = mB.length;
         res = new int[m][n];
 
         // Если количество столбцов первой матрицы равно количеству строк второй, то производим умножение
-        if (p == o) {
+        if (mB.length == mA[0].length) {
             // Транспонирование второй матрицы
-            mB = matrixProcessing.transpose(mB);
+            //mB = matrixProcessing.transpose(mB);
 
             System.out.println("Пул потоков: ");
             Scanner s = new Scanner(System.in);
@@ -88,7 +84,7 @@ public class MatrixMultiplication {
 
             long endTime = System.currentTimeMillis();
 
-            matrixProcessing.printArray(res);
+            //matrixProcessing.printArray(res);
             //matrixProcessing.saveArrayToFile(res,"res.txt");
 
             System.out.println("Время выполнения: " + (endTime - startTime) + "ms");
