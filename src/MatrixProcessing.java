@@ -101,20 +101,15 @@ public class MatrixProcessing {
      *
      * @param arr матрица, которую необходимо транспонировать
      */
-    public void transpose(int[][] arr){
-        if(arr.length != arr[0].length)
-            return;
-
+    public int[][] transpose(int[][] b){
         int buffer;
+        int[][] arr = new int[b[0].length][b.length];
 
-        for (int i = 0; i < arr.length; i++)
-        {
-            for (int j = 0; j < i; j++)
-            {
-                buffer = arr[i][j];
-                arr[i][j] = arr[j][i];
-                arr[j][i] = buffer;
+        for (int i = 0; i < b[0].length; i++) {
+            for (int j = 0; j < b.length; j++) {
+                arr[i][j] = b[j][i];
             }
         }
+        return arr;
     }
 }

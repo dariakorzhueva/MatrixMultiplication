@@ -34,6 +34,9 @@ public class MatrixMultiplication {
 
         // Если количество столбцов первой матрицы равно количеству строк второй, то производим умножение
         if (p == o) {
+            // Транспонирование второй матрицы
+            mB = matrixProcessing.transpose(mB);
+
             System.out.println("Пул потоков: ");
             Scanner s = new Scanner(System.in);
             int threads = s.nextInt();
@@ -48,14 +51,13 @@ public class MatrixMultiplication {
             Buffer buffer = new Buffer();
 
             // Инициализация и запуск потока-производителя, заполняющего очередь задач
-            ConcurrentQueueProducer cqp = new ConcurrentQueueProducer(buffer, mA, mB);
+            ConcurrentQueueProducer cqp = new ConcurrentQueueProducer(buffer, mA, mB, res);
             // Помещение функциональных интерфейсов в очередь задач
             for (int i = 0; i < m; i++) {
                 executor1.execute(cqp);
             }
 
-
-            // Ожидание завершения потока-производителя
+            // Ожидание завершения потоков-производителей
             executor1.shutdown();
 
             try {
