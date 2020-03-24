@@ -65,8 +65,8 @@ public class ConcurrentQueueProducer implements Runnable {
     public void run() {
         // Инициализация функционального интерфейса лямбда-выражением по вычислению строки
         MultiplyInterfece multiplyInterfece;
-        multiplyInterfece = basicMult();
-        //multiplyInterfece = transposeMult();
+        //multiplyInterfece = basicMult();
+        multiplyInterfece = transposeMult();
 
         buffer.put(multiplyInterfece);
     }

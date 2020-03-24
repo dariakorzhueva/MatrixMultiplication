@@ -16,7 +16,7 @@ public class MatrixProcessing {
         Random r = new Random();
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                arr[i][j] = 1;
+                arr[i][j] = r.nextInt();
             }
         }
 
@@ -99,7 +99,7 @@ public class MatrixProcessing {
     /**
      * Транспонирование матрицы
      *
-     * @param arr матрица, которую необходимо транспонировать
+     * @param b матрица, которую необходимо транспонировать
      */
     public int[][] transpose(int[][] b){
         int buffer;
