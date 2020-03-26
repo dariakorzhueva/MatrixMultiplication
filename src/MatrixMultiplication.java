@@ -22,8 +22,8 @@ public class MatrixMultiplication {
         MatrixProcessing matrixProcessing = new MatrixProcessing();
         //mA = matrixProcessing.loadArrayFromFile("matrixA.txt");
         //mB = matrixProcessing.loadArrayFromFile("matrixB.txt");
-        mA = matrixProcessing.initArray(5000,5000);
-        mB = matrixProcessing.initArray(5000,5000);
+        mA = matrixProcessing.initArray(500,500);
+        mB = matrixProcessing.initArray(500,500);
         m = mA.length;
         n = mB[0].length;
         res = new int[m][n];
@@ -31,7 +31,7 @@ public class MatrixMultiplication {
         // Если количество столбцов первой матрицы равно количеству строк второй, то производим умножение
         if (mB.length == mA[0].length) {
             // Транспонирование второй матрицы
-            mB = matrixProcessing.transpose(mB);
+            //mB = matrixProcessing.transpose(mB);
 
             System.out.println("Пул потоков: ");
             Scanner s = new Scanner(System.in);
